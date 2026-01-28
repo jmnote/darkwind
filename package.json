@@ -1,0 +1,61 @@
+{
+  "name": "darkwind",
+  "version": "0.1.0",
+  "description": "A Tailwind CSS plugin for automatic inverted dark mode colors.",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "scripts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "tailwindcss",
+    "tailwindcss-plugin",
+    "darkmode",
+    "dark-mode",
+    "theme",
+    "darkwind",
+    "color-inversion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmnote/darkwind.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jmnote/darkwind/issues"
+  },
+  "homepage": "https://github.com/jmnote/darkwind#readme",
+  "author": "jmnote",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "scripts": {
+    "dev": "vite --config demo/vite.config.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "tailwindcss": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^25.0.10",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "prettier": "^2.1.2",
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.1.2",
+    "vitest": "^4.0.18",
+    "vue": "^3.5.12"
+  }
+}
