@@ -112,7 +112,7 @@
               <p class="text-center font-mono text-xs text-gray-600 dark:text-gray-400">90</p>
             </div>
             <div class="flex items-center gap-1.5 sm:flex-col">
-              <div class="bg-x-sky-300/100"></div>
+              <div class="bg-x-sky-300"></div>
               <p class="text-center font-mono text-xs text-gray-600 dark:text-gray-400">100</p>
             </div>
           </div>

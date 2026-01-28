@@ -39,6 +39,7 @@
   },
   "scripts": {
     "dev": "vite --config demo/vite.config.ts",
+    "docs": "vite --config docs/vite.config.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run"
