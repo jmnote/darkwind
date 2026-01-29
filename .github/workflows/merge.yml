@@ -15,6 +15,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.TAGGING_PAT }}
+
+      - name: Ensure tagging token is set
+        run: |
+          if [ -z "${{ secrets.TAGGING_PAT }}" ]; then
+            echo "TAGGING_PAT secret is required to push tags and trigger downstream workflows."
+            exit 1
+          fi
 
       - name: Create tag from package.json version
         run: |
