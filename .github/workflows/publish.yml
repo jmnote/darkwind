@@ -17,6 +17,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Ensure npm supports trusted publishing
+        run: npm install -g npm@11.5.1
+
       - name: Determine tag from package.json version
         id: tag
         run: |
@@ -45,14 +55,6 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           generate_release_notes: true
-
-      - name: Use Node.js
-        if: steps.tag.outputs.created == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org
-          cache: npm
 
       - name: Install dependencies
         if: steps.tag.outputs.created == 'true'
