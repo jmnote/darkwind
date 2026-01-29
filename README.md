@@ -49,23 +49,23 @@ Now use the `x-` prefix:
 
 ### `offset` (Number)
 
-- Default: `1`
+- Default: `0`
 - Applied after symmetric inversion.
-- Calculated in 100-step units:
-  - `1`: shift toward lighter shades (modern default)
+- Calculated in shade steps:
+  - `1`: shift one step toward lighter shades (modern)
   - `0`: perfectly symmetric inversion
-  - `-1`: shift toward darker shades
+  - `-1`: shift one step toward darker shades
 - Note: Although Tailwind shade numbers increase toward darkness, `offset` follows lightness semantics: `+` means
   lighter, `-` means darker.
 
 ### `minShade` (Number)
 
-- Default: `50`
+- Default: `0`
 - Lower clamp for the result shade. The computed shade will not go below this value.
 
 ### `maxShade` (Number)
 
-- Default: `950`
+- Default: `1000`
 - Upper clamp for the result shade. The computed shade will not go above this value.
 
 ### `edgeFamily` (String)
@@ -97,9 +97,10 @@ Darkwind targets the default `tailwindcss/colors` palette only (custom colors ar
 
 For palette colors like `slate-100` or `gray-500`:
 
-- Symmetric inversion: mirror around 500
-- Apply offset: add `offset * 100` (positive values shift toward lighter shades)
-- Clamp to `minShade` / `maxShade`
+- Symmetric inversion: mirror at 500
+- Apply offset by shifting the result by `offset` shade steps in this sequence:
+  `50 → 100 → 200 → 300 → 400 → 500 → 600 → 700 → 800 → 900 → 950`
+- Clamp to the ends of the sequence (and to `minShade` / `maxShade` if configured)
 - Snap to the nearest valid shade (`50–950`, ties round up)
 
 ### 3) `white` / `black`
@@ -112,40 +113,62 @@ For palette colors like `slate-100` or `gray-500`:
 
 These are illustrative examples, not API options. Use numeric options instead.
 
-| Example | modern (default) | symmetric | darker |
-| :-----: | :-------------: | :-------: | :----: |
-| offset | `+1` (lighter) | `0` | `-1` (darker) |
-| maxShade | `950` | `1000` | `1000` |
-| minShade | `50` | `0` | `100` |
+| Example | symmetric (default) | modern | darker |
+| :-----: | :-----------------: | :----: | :----: |
+| offset | `0` | `1` (lighter) | `-1` (darker) |
+| maxShade | `1000` | `950` | `1000` |
+| minShade | `0` | `50` | `100` |
 | **Mapping** |  |  |  |
-| white | `gray-950`† | `black` | `gray-900`† |
-| 50 | `950` | `950` | `900` |
-| 100 | `950` | `900` | `800` |
-| 200 | `900` | `800` | `700` |
-| 300 | `800` | `700` | `600` |
-| 400 | `700` | `600` | `500` |
-| 500 | `600` | `500` | `400` |
-| 600 | `500` | `400` | `300` |
-| 700 | `400` | `300` | `200` |
-| 800 | `300` | `200` | `100` |
-| 900 | `50` | `100` | `100` |
-| 950 | `200` | `50` | `100` |
-| black | `gray-50`† | `white` | `gray-100`† |
+| white | `black` | `gray-950`† | `gray-900`† |
+| 50 | `950` | `900` | `950` |
+| 100 | `900` | `800` | `950` |
+| 200 | `800` | `700` | `900` |
+| 300 | `700` | `600` | `800` |
+| 400 | `600` | `500` | `700` |
+| 500 | `500` | `400` | `600` |
+| 600 | `400` | `300` | `500` |
+| 700 | `300` | `200` | `400` |
+| 800 | `200` | `100` | `300` |
+| 900 | `100` | `50` | `200` |
+| 950 | `50` | `50` | `100` |
+| black | `white` | `gray-50`† | `gray-100`† |
 * † edgeFamily-applied value.
 
-### 🔧 Example Configuration
+### Defaults
+
+Darkwind defaults to a symmetric, mathematically neutral inversion:
+
+- offset: 0
+- maxShade: 1000
+- minShade: 0
+
+### 🔧 Configuration Example (symmetric default)
 
 ```js
 // tailwind.config.js
 module.exports = {
   // ...
+  darkMode: 'class', // Required for the plugin to work
+  plugins: [
+    require('darkwind')(),
+  ],
+}
+```
+
+For modern UI contrast, we recommend:
+
+### 🔧 Configuration Example (modern)
+
+```js
+// tailwind.config.js
+module.exports = {
+  // ...
+  darkMode: 'class', // Required for the plugin to work
   plugins: [
     require('darkwind')({
-      prefix: 'x', // Custom prefix (default: 'x')
-      offset: 0, // Symmetric inversion
-      minShade: 50,
-      maxShade: 950,
-      edgeFamily: 'gray',
+      offset: 1, // Modern inversion (default: 0)
+      maxShade: 950, // default: 1000
+      minShade: 50, // default: 0
     }),
   ],
 }
