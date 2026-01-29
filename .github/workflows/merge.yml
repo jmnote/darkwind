@@ -1,4 +1,4 @@
-name: Tag on main merge
+name: Release on main merge
 
 on:
   push:
@@ -7,32 +7,57 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  tag:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.TAGGING_PAT }}
 
-      - name: Ensure tagging token is set
-        run: |
-          if [ -z "${{ secrets.TAGGING_PAT }}" ]; then
-            echo "TAGGING_PAT secret is required to push tags and trigger downstream workflows."
-            exit 1
-          fi
-
-      - name: Create tag from package.json version
+      - name: Determine tag from package.json version
+        id: tag
         run: |
           VERSION="$(node -p "require('./package.json').version")"
           TAG="v$VERSION"
           if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
             echo "Tag $TAG already exists. Skipping."
-            exit 0
+            echo "created=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "created=true" >> "$GITHUB_OUTPUT"
           fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        if: steps.tag.outputs.created == 'true'
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "$TAG"
-          git push origin "$TAG"
+          git tag "${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.tag.outputs.tag }}"
+
+      - name: Create GitHub release
+        if: steps.tag.outputs.created == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+
+      - name: Use Node.js
+        if: steps.tag.outputs.created == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.tag.outputs.created == 'true'
+        run: npm ci
+
+      - name: Publish to npm
+        if: steps.tag.outputs.created == 'true'
+        run: npm publish --provenance --access public
