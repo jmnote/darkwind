@@ -1,6 +1,6 @@
 {
   "name": "darkwind",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A Tailwind CSS plugin for automatic inverted dark mode colors.",
   "main": "src/index.js",
   "files": [
