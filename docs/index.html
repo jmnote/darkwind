@@ -77,8 +77,12 @@ module.exports = {
         <h2>How it works</h2>
         <ul class="list">
           <li>Targets the default <code>tailwindcss/colors</code> palette only.</li>
-          <li>Shade colors like <code>red-300</code> are mirrored around 500.</li>
-          <li>Results are shifted by <code>offset</code>, clamped, and snapped to valid shades.</li>
+          <li>Shade colors like <code>red-300</code> are mirrored at 500.</li>
+          <li>
+            <code>offset</code> shifts the result by shade steps in this sequence:
+            <code>50 → 100 → 200 → 300 → 400 → 500 → 600 → 700 → 800 → 900 → 950</code>.
+          </li>
+          <li>Results are clamped to the sequence ends (and min/max), then snapped to valid shades.</li>
           <li><code>white</code>/<code>black</code> are mapped using <code>edgeFamily</code>.</li>
         </ul>
       </section>
@@ -93,17 +97,17 @@ module.exports = {
           </div>
           <div class="dw-row">
             <div><code>offset</code></div>
-            <div><code>1</code></div>
-            <div>Positive values shift toward lighter shades.</div>
+            <div><code>0</code></div>
+            <div>Positive values shift toward lighter shades; negative shift darker.</div>
           </div>
           <div class="dw-row">
             <div><code>minShade</code></div>
-            <div><code>50</code></div>
+            <div><code>0</code></div>
             <div>Clamp lower bound.</div>
           </div>
           <div class="dw-row">
             <div><code>maxShade</code></div>
-            <div><code>950</code></div>
+            <div><code>1000</code></div>
             <div>Clamp upper bound.</div>
           </div>
           <div class="dw-row">
@@ -117,17 +121,34 @@ module.exports = {
             <div>Changes the utility prefix.</div>
           </div>
         </div>
+        <h3>Defaults</h3>
+        <p>Darkwind defaults to a symmetric, mathematically neutral inversion:</p>
+        <ul class="list">
+          <li><code>offset: 0</code></li>
+          <li><code>maxShade: 1000</code></li>
+          <li><code>minShade: 0</code></li>
+        </ul>
         <pre class="code" data-lang="js">
-<code>// tailwind.config.js
+<code>// tailwind.config.js (symmetric default)
 module.exports = {
   // ...
+  darkMode: 'class',
+  plugins: [
+    require('darkwind')(),
+  ],
+}</code>
+        </pre>
+        <p>For modern UI contrast, we recommend:</p>
+        <pre class="code" data-lang="js">
+<code>// tailwind.config.js (modern)
+module.exports = {
+  // ...
+  darkMode: 'class',
   plugins: [
     require('darkwind')({
-      prefix: 'x', // Custom prefix (default: 'x')
-      offset: 0, // Symmetric inversion
-      minShade: 50,
-      maxShade: 950,
-      edgeFamily: 'gray',
+      offset: 1,     // Modern inversion (default: 0)
+      maxShade: 950, // default: 1000
+      minShade: 50,  // default: 0
     }),
   ],
 }</code>
@@ -140,26 +161,26 @@ module.exports = {
           <div class="dw-table">
             <div class="dw-row dw-head">
               <div>Example</div>
-              <div>modern (default)</div>
-              <div>symmetric</div>
+              <div>symmetric (default)</div>
+              <div>modern</div>
               <div>darker</div>
             </div>
             <div class="dw-row">
               <div>offset</div>
-              <div><code>+1</code></div>
               <div><code>0</code></div>
-              <div><code>-1</code></div>
+              <div><code>1</code> (lighter)</div>
+              <div><code>-1</code> (darker)</div>
             </div>
             <div class="dw-row">
               <div>maxShade</div>
-              <div><code>950</code></div>
               <div><code>1000</code></div>
+              <div><code>950</code></div>
               <div><code>1000</code></div>
             </div>
             <div class="dw-row">
               <div>minShade</div>
-              <div><code>50</code></div>
               <div><code>0</code></div>
+              <div><code>50</code></div>
               <div><code>100</code></div>
             </div>
             <div class="dw-row">
@@ -170,80 +191,80 @@ module.exports = {
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-white text-gray-900">white</div>
-              <div class="chip-cell bg-gray-950">gray-950†</div>
               <div class="chip-cell bg-black">black</div>
+              <div class="chip-cell bg-gray-950">gray-950†</div>
               <div class="chip-cell bg-gray-900">gray-900†</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-50 text-gray-900">50</div>
               <div class="chip-cell bg-sky-950">950</div>
+              <div class="chip-cell bg-sky-900">900</div>
               <div class="chip-cell bg-sky-950">950</div>
-              <div class="chip-cell bg-sky-900">900</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-100 text-gray-900">100</div>
+              <div class="chip-cell bg-sky-900">900</div>
+              <div class="chip-cell bg-sky-800">800</div>
               <div class="chip-cell bg-sky-950">950</div>
-              <div class="chip-cell bg-sky-900">900</div>
-              <div class="chip-cell bg-sky-800">800</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-200 text-gray-900">200</div>
+              <div class="chip-cell bg-sky-800">800</div>
+              <div class="chip-cell bg-sky-700">700</div>
               <div class="chip-cell bg-sky-900">900</div>
-              <div class="chip-cell bg-sky-800">800</div>
-              <div class="chip-cell bg-sky-700">700</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-300 text-gray-900">300</div>
+              <div class="chip-cell bg-sky-700">700</div>
+              <div class="chip-cell bg-sky-600">600</div>
               <div class="chip-cell bg-sky-800">800</div>
-              <div class="chip-cell bg-sky-700">700</div>
-              <div class="chip-cell bg-sky-600">600</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-400 text-gray-900">400</div>
-              <div class="chip-cell bg-sky-700">700</div>
               <div class="chip-cell bg-sky-600">600</div>
               <div class="chip-cell bg-sky-500">500</div>
+              <div class="chip-cell bg-sky-700">700</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-500">500</div>
-              <div class="chip-cell bg-sky-600">600</div>
               <div class="chip-cell bg-sky-500">500</div>
               <div class="chip-cell bg-sky-400 text-gray-900">400</div>
+              <div class="chip-cell bg-sky-600">600</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-600">600</div>
-              <div class="chip-cell bg-sky-500">500</div>
               <div class="chip-cell bg-sky-400 text-gray-900">400</div>
               <div class="chip-cell bg-sky-300 text-gray-900">300</div>
+              <div class="chip-cell bg-sky-500">500</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-700">700</div>
-              <div class="chip-cell bg-sky-400 text-gray-900">400</div>
               <div class="chip-cell bg-sky-300 text-gray-900">300</div>
               <div class="chip-cell bg-sky-200 text-gray-900">200</div>
+              <div class="chip-cell bg-sky-400 text-gray-900">400</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-800">800</div>
-              <div class="chip-cell bg-sky-300 text-gray-900">300</div>
               <div class="chip-cell bg-sky-200 text-gray-900">200</div>
               <div class="chip-cell bg-sky-100 text-gray-900">100</div>
+              <div class="chip-cell bg-sky-300 text-gray-900">300</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-900">900</div>
+              <div class="chip-cell bg-sky-100 text-gray-900">100</div>
+              <div class="chip-cell bg-sky-50 text-gray-900">50</div>
               <div class="chip-cell bg-sky-200 text-gray-900">200</div>
-              <div class="chip-cell bg-sky-100 text-gray-900">100</div>
-              <div class="chip-cell bg-sky-100 text-gray-900">100</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-950">950</div>
-              <div class="chip-cell bg-sky-100 text-gray-900">100</div>
+              <div class="chip-cell bg-sky-50 text-gray-900">50</div>
               <div class="chip-cell bg-sky-50 text-gray-900">50</div>
               <div class="chip-cell bg-sky-100 text-gray-900">100</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-black">black</div>
-              <div class="chip-cell bg-gray-50 text-gray-900">gray-50†</div>
               <div class="chip-cell bg-white text-gray-900">white</div>
+              <div class="chip-cell bg-gray-50 text-gray-900">gray-50†</div>
               <div class="chip-cell bg-gray-100 text-gray-900">gray-100†</div>
             </div>
           </div>

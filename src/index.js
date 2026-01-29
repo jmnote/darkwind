@@ -4,6 +4,7 @@ const colors = require('tailwindcss/colors')
 
 const VALID_SHADES = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
 const VALID_SHADE_SET = new Set(VALID_SHADES)
+const VALID_SHADE_INDEX = new Map(VALID_SHADES.map((shade, index) => [shade, index]))
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
@@ -26,10 +27,21 @@ function snapShade(value) {
   return closest
 }
 
+function shiftShadeBySteps(shade, offset) {
+  const startIndex = VALID_SHADE_INDEX.get(shade)
+  if (startIndex === undefined) return snapShade(shade)
+
+  const shiftedIndex = startIndex + offset
+  const clampedIndex = clamp(shiftedIndex, 0, VALID_SHADES.length - 1)
+  const snappedIndex = Math.round(clampedIndex)
+
+  return VALID_SHADES[snappedIndex]
+}
+
 function normalizeOptions(userOptions = {}) {
-  const offset = Number.isFinite(userOptions.offset) ? userOptions.offset : 1
-  let minShade = Number.isFinite(userOptions.minShade) ? userOptions.minShade : 50
-  let maxShade = Number.isFinite(userOptions.maxShade) ? userOptions.maxShade : 950
+  const offset = Number.isFinite(userOptions.offset) ? userOptions.offset : 0
+  let minShade = Number.isFinite(userOptions.minShade) ? userOptions.minShade : 0
+  let maxShade = Number.isFinite(userOptions.maxShade) ? userOptions.maxShade : 1000
 
   if (minShade > maxShade) {
     const temp = minShade
@@ -58,8 +70,9 @@ function normalizeOptions(userOptions = {}) {
 }
 
 function mapShade(shade, options) {
-  const result = 1000 - shade + options.offset * 100
-  const clamped = clamp(result, options.minShade, options.maxShade)
+  const mirrored = 1000 - shade
+  const shifted = shiftShadeBySteps(mirrored, -options.offset)
+  const clamped = clamp(shifted, options.minShade, options.maxShade)
   return snapShade(clamped)
 }
 
