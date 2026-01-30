@@ -42,9 +42,7 @@ function normalizeOptions(userOptions = {}) {
   const offset = Number.isFinite(userOptions.offset) ? userOptions.offset : 0
   let minShade = Number.isFinite(userOptions.minShade) ? userOptions.minShade : 0
   let maxShade = Number.isFinite(userOptions.maxShade) ? userOptions.maxShade : 1000
-  const tailwindVersion = Number.isFinite(userOptions.tailwindVersion)
-    ? userOptions.tailwindVersion
-    : 4
+  const tailwindVersion = Number.isFinite(userOptions.tailwindVersion) ? userOptions.tailwindVersion : 4
 
   if (minShade > maxShade) {
     const temp = minShade
@@ -203,24 +201,15 @@ module.exports = plugin.withOptions(
     const finalMap = buildColorMap(options)
 
     const extendedColors = {}
-    const useFunctionColors = Number(options.tailwindVersion) < 4
-    const toAlphaPercent = (opacityValue) => {
-      if (opacityValue === undefined || opacityValue === null) return null
-      if (typeof opacityValue === 'string' && opacityValue.trim().endsWith('%')) return opacityValue.trim()
-      const numeric = Number(opacityValue)
-      if (Number.isFinite(numeric)) return `${numeric * 100}%`
-      return `calc(${opacityValue} * 100%)`
-    }
-
     Object.entries(finalMap).forEach(([alias, v]) => {
       const fallback = options.previewFallback ? resolvePreviewFallback(v && v.light, null) : null
       const baseValue = fallback ? `var(--${alias}, ${fallback})` : `var(--${alias})`
 
-      if (useFunctionColors) {
+      if (options.tailwindVersion < 4) {
         extendedColors[alias] = ({ opacityValue } = {}) => {
-          const alpha = toAlphaPercent(opacityValue)
-          if (!alpha) return baseValue
-          return `color-mix(in srgb, ${baseValue} ${alpha}, transparent)`
+          const a = Number(opacityValue)
+          if (!a || a == 1) return baseValue
+          return `color-mix(in srgb, ${baseValue} ${a * 100}%, transparent)`
         }
       } else {
         extendedColors[alias] = baseValue
