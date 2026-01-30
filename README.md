@@ -13,10 +13,6 @@ Darkwind is rule-based, predictable, and configurable. It adapts dark mode color
 
 ```bash
 npm install darkwind
-# or
-pnpm add darkwind
-# or
-yarn add darkwind
 ```
 
 ### Configuration
