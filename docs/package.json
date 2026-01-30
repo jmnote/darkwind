@@ -1,0 +1,17 @@
+{
+  "name": "darkwind-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^25.0.10",
+    "darkwind": "^0.1.6",
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.1.2"
+  }
+}

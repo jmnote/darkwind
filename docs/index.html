@@ -6,16 +6,9 @@
     <title>Darkwind · Tailwind Dark Mode Inversion</title>
     <meta
       name="description"
-      content="Darkwind is a zero-config Tailwind CSS plugin that inverts palette shades for dark mode using predictable rules."
+      content="Darkwind is an auto-dark plugin for Tailwind CSS with zero-config inverted colors."
     />
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
     <div class="bg-orbit"></div>
@@ -23,7 +16,9 @@
       <div class="container nav-inner">
         <div class="logo">Darkwind</div>
         <nav class="nav-links">
-          <a href="#usage">Usage</a>
+          <a href="#get-started">Get Started</a>
+          <a href="#examples">Examples</a>
+          <a href="#features">Features</a>
           <a href="#how">How it works</a>
           <a href="#options">Options</a>
         </nav>
@@ -35,42 +30,182 @@
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">Tailwind CSS Plugin</p>
-          <h1>A zero-config plugin that creates inverted dark mode colors.</h1>
+          <h1>An auto-dark plugin for Tailwind CSS with zero-config inverted colors.</h1>
           <p class="lead">
-            Write <code>bg-x-slate-100</code>, get an automatic dark equivalent with no config.
+            Write <code>bg-x-slate-200</code>, and get <code>slate-800</code> (or <code>700</code>) in dark mode
+            automatically.
           </p>
           <div class="cta">
-            <a class="btn" href="#usage">Get started</a>
+          <a class="btn" href="#get-started">Get Started</a>
             <a class="btn ghost" href="#how">How it works</a>
           </div>
           <div class="hero-meta">
             <span>Default palette only</span>
             <span>Dark mode class‑based</span>
-            <span>Tailwind v4 compatible</span>
+            <span>Tailwind v3/v4 compatible</span>
           </div>
         </div>
       </section>
 
-      <section id="usage" class="stack">
-        <h2>Usage</h2>
+      <section id="get-started" class="stack">
+        <h2>Get Started</h2>
+        <h3>Installation</h3>
+        <pre class="code" data-lang="bash">
+<code>npm install darkwind
+# or
+pnpm add darkwind
+# or
+yarn add darkwind</code>
+        </pre>
         <p>
           Install the plugin and use the <code>x-</code> prefix with Tailwind palette colors.
           Dark mode must be class‑based.
         </p>
         <pre class="code" data-lang="js">
 <code>// tailwind.config.js
-module.exports = {
+import darkwind from 'darkwind'
+
+export default {
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx,vue}',
+  ],
   darkMode: 'class',
-  plugins: [require('darkwind')()],
+  plugins: [
+    darkwind(),
+  ],
 }</code>
         </pre>
         <pre class="code" data-lang="html">
-<code>&lt;html class="dark"&gt;
-  &lt;div class="bg-x-slate-100 text-x-slate-900"&gt;
-    This card adapts to the wind.
-  &lt;/div&gt;
-&lt;/html&gt;</code>
+<code>&lt;div class="bg-x-slate-200 text-x-slate-800"&gt;
+  This card adapts to the wind.
+&lt;/div&gt;</code>
         </pre>
+        <div class="demo-grid">
+          <div class="demo-card light">
+            <h3>Light mode</h3>
+            <p>Base UI before the inversion kicks in.</p>
+            <div class="demo-sample bg-x-slate-200 text-x-slate-800">This card adapts to the wind.</div>
+          </div>
+          <div class="demo-card dark">
+            <h3>Dark mode</h3>
+            <p>Same classes, inverted palette.</p>
+            <div class="demo-sample bg-x-slate-200 text-x-slate-800">This card adapts to the wind.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="examples" class="stack">
+        <h2>Examples</h2>
+        <p>Palette inversion and opacity modifiers together.</p>
+        <div class="demo-grid">
+          <div class="demo-card light">
+            <h3>Color palette</h3>
+            <div class="swatch-row">
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-100"></span>
+                <span>100</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-300"></span>
+                <span>300</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-500"></span>
+                <span>500</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-700"></span>
+                <span>700</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-900"></span>
+                <span>900</span>
+              </div>
+            </div>
+          </div>
+          <div class="demo-card dark">
+            <h3>Color palette</h3>
+            <div class="swatch-row">
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-100"></span>
+                <span>100</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-300"></span>
+                <span>300</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-500"></span>
+                <span>500</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-700"></span>
+                <span>700</span>
+              </div>
+              <div class="swatch-stack">
+                <span class="swatch bg-x-sky-900"></span>
+                <span>900</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <pre class="code" data-lang="html">
+<code>&lt;div&gt;
+  &lt;span class="bg-x-sky-100"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-300"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-500"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-700"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-900"&gt;&lt;/span&gt;
+&lt;/div&gt;</code>
+        </pre>
+        <div class="demo-grid">
+          <div class="demo-card light">
+            <h3>Opacity support</h3>
+            <div class="opacity-panel">
+              <span class="swatch bg-x-sky-500/10"></span>
+              <span class="swatch bg-x-sky-500/30"></span>
+              <span class="swatch bg-x-sky-500/50"></span>
+              <span class="swatch bg-x-sky-500/70"></span>
+              <span class="swatch bg-x-sky-500/90"></span>
+            </div>
+          </div>
+          <div class="demo-card dark">
+            <h3>Opacity support</h3>
+            <div class="opacity-panel">
+              <span class="swatch bg-x-sky-500/10"></span>
+              <span class="swatch bg-x-sky-500/30"></span>
+              <span class="swatch bg-x-sky-500/50"></span>
+              <span class="swatch bg-x-sky-500/70"></span>
+              <span class="swatch bg-x-sky-500/90"></span>
+            </div>
+          </div>
+        </div>
+        <pre class="code" data-lang="html">
+<code>&lt;div&gt;
+  &lt;span class="bg-x-sky-500/10"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-500/30"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-500/50"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-500/70"&gt;&lt;/span&gt;
+  &lt;span class="bg-x-sky-500/90"&gt;&lt;/span&gt;
+&lt;/div&gt;</code>
+        </pre>
+      </section>
+
+      <section id="features" class="stack">
+        <h2>Features</h2>
+        <ul class="list">
+          <li><strong>Drop-in prefix</strong>: Use <code>x-</code> in front of default palette colors to get automatic dark equivalents.</li>
+          <li><strong>Predictable mapping</strong>: Math-based inversion across the 11 shade steps (50 → 950), with tunable offsets.</li>
+          <li><strong>White/black handling</strong>: Edge colors map into the shade spectrum via <code>edgeFamily</code>.</li>
+          <li><strong>Opacity friendly</strong>: Works with slash modifiers like <code>bg-x-sky-500/50</code>.</li>
+          <li><strong>Tailwind v3/v4 compatible</strong>: Works in both Tailwind v3 and v4.</li>
+          <li><strong>VS Code Preview</strong>: <code>x-</code> classes (e.g., <code>bg-x-sky-500/50</code>) show color previews in VS Code.</li>
+        </ul>
+        <figure class="preview">
+          <img src="./images/vscode-color-preview.png" alt="VS Code color preview for x- classes" />
+          <figcaption>VS Code previews for <code>x-</code> classes.</figcaption>
+        </figure>
       </section>
 
       <section id="how" class="stack">
@@ -119,6 +254,11 @@ module.exports = {
             <div><code>prefix</code></div>
             <div><code>x</code></div>
             <div>Changes the utility prefix.</div>
+          </div>
+          <div class="dw-row">
+            <div><code>tailwindVersion</code></div>
+            <div><code>4</code></div>
+            <div>Set to <code>3</code> in Tailwind v3 to support opacity modifiers like <code>/50</code>.</div>
           </div>
         </div>
         <h3>Defaults</h3>
@@ -193,13 +333,13 @@ module.exports = {
               <div class="chip-cell bg-white text-gray-900">white</div>
               <div class="chip-cell bg-black">black</div>
               <div class="chip-cell bg-gray-950">gray-950†</div>
-              <div class="chip-cell bg-gray-900">gray-900†</div>
+              <div class="chip-cell bg-black">black</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-50 text-gray-900">50</div>
               <div class="chip-cell bg-sky-950">950</div>
               <div class="chip-cell bg-sky-900">900</div>
-              <div class="chip-cell bg-sky-950">950</div>
+              <div class="chip-cell bg-black">black</div>
             </div>
             <div class="dw-row">
               <div class="chip-cell bg-sky-100 text-gray-900">100</div>
@@ -278,7 +418,7 @@ module.exports = {
     <footer class="footer">
       <div class="container footer-inner">
         <span>Darkwind · MIT</span>
-        <span>Built for Tailwind CSS v4</span>
+        <span>Built for Tailwind CSS v3/v4</span>
       </div>
     </footer>
 

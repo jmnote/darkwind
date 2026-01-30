@@ -1,3 +1,6 @@
+@config "./tailwind.config.js";
+@import "tailwindcss";
+
 :root {
   --bg: #0c0f13;
   --bg-2: #121820;
@@ -172,6 +175,134 @@ main {
   font-family: "IBM Plex Mono", "Courier New", monospace;
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.demo-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.preview {
+  margin: 6px 0 10px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--stroke);
+  background: rgba(12, 16, 22, 0.6);
+}
+
+.preview img {
+  max-width: 520px;
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+}
+
+.preview figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.demo-card {
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--stroke);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.25);
+}
+
+.demo-card h3 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.demo-card.light {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #e2e8f0;
+}
+
+.demo-card.dark {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-color: #1e293b;
+}
+
+.demo-card.light p {
+  color: #475569;
+}
+
+.demo-card.dark p {
+  color: #94a3b8;
+}
+
+.demo-sample {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.demo-subtitle {
+  margin: 14px 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+}
+
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.swatch-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.demo-card.light .swatch-stack {
+  color: #64748b;
+}
+
+.demo-card.dark .swatch-stack {
+  color: #94a3b8;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.opacity-panel {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  --checkered-bg: rgba(148, 163, 184, 0.35);
+  background-image: linear-gradient(45deg, var(--checkered-bg) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--checkered-bg) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--checkered-bg) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--checkered-bg) 75%);
+  background-size: 20px 20px;
+  background-position: 0px 0px, 0px 10px, 10px -10px, -10px 0px;
+}
+
+.demo-card.light .opacity-panel {
+  --checkered-bg: rgba(148, 163, 184, 0.45);
+}
+
+.demo-card.dark .opacity-panel {
+  --checkered-bg: rgba(148, 163, 184, 0.25);
 }
 
 
