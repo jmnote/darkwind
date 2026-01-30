@@ -25,10 +25,17 @@ function getExtendedColors(options = {}) {
 
 describe('Darkwind Plugin Logic Tests', () => {
   it('should map theme colors to CSS variables with alpha support', () => {
-    const colors = getExtendedColors({})
+    const colors = getExtendedColors({ tailwindVersion: 3 })
 
-    expect(typeof colors['x-blue-100']).toBe('string')
-    expect(colors['x-blue-100']).toMatch(/var\(--x-blue-100/)
+    const blue = colors['x-blue-100']
+    const baseValue = typeof blue === 'function' ? blue({}) : blue
+    const alphaValue = typeof blue === 'function' ? blue({ opacityValue: '0.5' }) : blue
+
+    expect(typeof baseValue).toBe('string')
+    expect(baseValue).toMatch(/var\(--x-blue-100/)
+    if (typeof blue === 'function') {
+      expect(alphaValue).toMatch(/color-mix\(/)
+    }
     expect(colors['x-blue-800']).toBeDefined()
   })
 

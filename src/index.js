@@ -42,6 +42,9 @@ function normalizeOptions(userOptions = {}) {
   const offset = Number.isFinite(userOptions.offset) ? userOptions.offset : 0
   let minShade = Number.isFinite(userOptions.minShade) ? userOptions.minShade : 0
   let maxShade = Number.isFinite(userOptions.maxShade) ? userOptions.maxShade : 1000
+  const tailwindVersion = Number.isFinite(userOptions.tailwindVersion)
+    ? userOptions.tailwindVersion
+    : 4
 
   if (minShade > maxShade) {
     const temp = minShade
@@ -66,6 +69,7 @@ function normalizeOptions(userOptions = {}) {
     edgeFamily,
     prefix,
     previewFallback,
+    tailwindVersion,
   }
 }
 
@@ -125,6 +129,26 @@ function resolveCssValue(colorKey) {
   return `var(--color-${colorKey})`
 }
 
+function resolveThemeColor(theme, colorKey) {
+  if (typeof theme !== 'function' || typeof colorKey !== 'string') return null
+  if (colorKey === 'white' || colorKey === 'black') {
+    return theme(`colors.${colorKey}`)
+  }
+
+  const parts = colorKey.split('-')
+  if (parts.length < 2) return theme(`colors.${colorKey}`)
+
+  const shade = parts.pop()
+  const name = parts.join('-')
+  const value = theme(`colors.${name}.${shade}`)
+  if (value) return value
+
+  const family = theme(`colors.${name}`)
+  if (typeof family === 'string') return family
+
+  return null
+}
+
 function resolveColorFallback(colorKey) {
   if (typeof colorKey !== 'string') return null
   if (colorKey.startsWith('#') || colorKey.startsWith('rgb(') || colorKey.startsWith('hsl(') || colorKey.startsWith('oklch(')) return colorKey
@@ -139,12 +163,18 @@ function resolveColorFallback(colorKey) {
   return colors[name][shade]
 }
 
+function resolvePreviewFallback(colorKey, theme) {
+  const themeValue = resolveThemeColor(theme, colorKey)
+  if (themeValue) return themeValue
+  return resolveColorFallback(colorKey)
+}
+
 module.exports = plugin.withOptions(
   (userOptions = {}) => {
     const options = normalizeOptions(userOptions)
     const finalMap = buildColorMap(options)
 
-    return ({ addBase }) => {
+    return ({ addBase, theme }) => {
       const lightVars = {}
       const darkVars = {}
 
@@ -152,8 +182,14 @@ module.exports = plugin.withOptions(
         if (!v || typeof v !== 'object') return
         if (typeof v.light !== 'string' || typeof v.dark !== 'string') return
 
-        lightVars[`--${alias}`] = resolveCssValue(v.light)
-        darkVars[`--${alias}`] = resolveCssValue(v.dark)
+        lightVars[`--${alias}`] =
+          resolveThemeColor(theme, v.light) ||
+          resolveColorFallback(v.light) ||
+          resolveCssValue(v.light)
+        darkVars[`--${alias}`] =
+          resolveThemeColor(theme, v.dark) ||
+          resolveColorFallback(v.dark) ||
+          resolveCssValue(v.dark)
       })
 
       addBase({
@@ -167,10 +203,28 @@ module.exports = plugin.withOptions(
     const finalMap = buildColorMap(options)
 
     const extendedColors = {}
+    const useFunctionColors = Number(options.tailwindVersion) < 4
+    const toAlphaPercent = (opacityValue) => {
+      if (opacityValue === undefined || opacityValue === null) return null
+      if (typeof opacityValue === 'string' && opacityValue.trim().endsWith('%')) return opacityValue.trim()
+      const numeric = Number(opacityValue)
+      if (Number.isFinite(numeric)) return `${numeric * 100}%`
+      return `calc(${opacityValue} * 100%)`
+    }
 
     Object.entries(finalMap).forEach(([alias, v]) => {
-      const fallback = options.previewFallback ? resolveColorFallback(v && v.light) : null
-      extendedColors[alias] = fallback ? `var(--${alias}, ${fallback})` : `var(--${alias})`
+      const fallback = options.previewFallback ? resolvePreviewFallback(v && v.light, null) : null
+      const baseValue = fallback ? `var(--${alias}, ${fallback})` : `var(--${alias})`
+
+      if (useFunctionColors) {
+        extendedColors[alias] = ({ opacityValue } = {}) => {
+          const alpha = toAlphaPercent(opacityValue)
+          if (!alpha) return baseValue
+          return `color-mix(in srgb, ${baseValue} ${alpha}, transparent)`
+        }
+      } else {
+        extendedColors[alias] = baseValue
+      }
     })
 
     return {
