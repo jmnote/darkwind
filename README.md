@@ -146,6 +146,7 @@ These are illustrative examples, not API options. Use numeric options instead.
 
 - Default: `4`
 - Set to `3` for Tailwind v3 projects so opacity modifiers like `/50` are supported.
+- Note: v3 opacity uses `color-mix()`, so make sure your target browsers support it.
 
 ### Defaults
 
